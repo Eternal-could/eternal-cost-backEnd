@@ -15,7 +15,7 @@ function enCryptData(data, key, algorithm) {
   hmac.update(data);
   return hmac.digest('hex');
 }
-const key = v4();
+
 
 class UserController extends Controller {
   async register() {
@@ -40,6 +40,7 @@ class UserController extends Controller {
       return;
     }
     // 注册，将数据存入数据库
+    const key = v4();
     const enPassword = enCryptData(ctx.request.body.password, key, 'sha256');
     const result = await ctx.service.user.register({
       username,
@@ -47,6 +48,7 @@ class UserController extends Controller {
       signature: 'eternal~',
       avatar: defaultAvatar,
       ctime: Math.ceil(new Date().getTime() / 1000),
+      key,
     });
     if (result) {
       ctx.body = {
@@ -74,8 +76,8 @@ class UserController extends Controller {
       };
       return;
     }
-    const enPassword = enCryptData(password, key, 'sha256');
-    if (userInfo && enPassword !== userInfo.password) {
+    const enPassword = enCryptData(password, userInfo.key, 'sha256');
+    if (userInfo && userInfo.password !== enPassword) {
       ctx.body = {
         code: 500,
         msg: '账号或密码错误',
@@ -97,6 +99,19 @@ class UserController extends Controller {
       msg: '登录成功',
       data: {
         token,
+      },
+    };
+  }
+  // 验证，服务端解析token
+  async test() {
+    const { ctx, app } = this;
+    const token = ctx.request.header.authorization;
+    const decode = app.jwt.verify(token, app.config.jwt.secret);
+    ctx.body = {
+      code: 200,
+      msg: '获取token成功',
+      data: {
+        ...decode,
       },
     };
   }
