@@ -34,6 +34,10 @@ module.exports = appInfo => {
     app: true,
     agent: false,
   };
+
+  config.jwt = {
+    secret: 'JYuChengXan',
+  };
   // add your middleware config here
   config.middleware = [];
 
