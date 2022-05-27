@@ -76,8 +76,8 @@ class UserController extends Controller {
       };
       return;
     }
-    const enPassword = enCryptData(password, userInfo.key, 'sha256');
-    if (userInfo && userInfo.password !== enPassword) {
+    const dePassword = enCryptData(password, userInfo.key, 'sha256');
+    if (userInfo && userInfo.password !== dePassword) {
       ctx.body = {
         code: 500,
         msg: '账号或密码错误',
