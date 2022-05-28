@@ -17,18 +17,16 @@ class UploadController extends Controller {
     // 将资源放在哪
     let uploadDir = '';
     try {
+      // f Buffer
       let f = fs.readFileSync(file.filepath);
       // 获取当前日期
       let day = moment(new Date()).format('YYYYMMDD');
-      // 创建图片保存的路径
+      // dir 创建图片保存的路径 比如： app/public/upload/20220528
       let dir = path.join(this.config.uploadDir, day);
       let date = Date.now(); // 毫秒数
       await mkdirp(dir); // 不存在就创建目录
-      // 返回图片保存的路径
+      // 返回图片保存的路径 比如： app/public/upload/20220528/1653731573861.jpeg
       uploadDir = path.join(dir, date + path.extname(file.filename));
-      console.log('-------------');
-      console.log('uploadDir = ', uploadDir);
-      console.log('-------------');
       // 写入文件夹
       fs.writeFileSync(uploadDir, f);
     } finally {
