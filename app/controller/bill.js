@@ -16,6 +16,7 @@ class BillController extends Controller {
         msg: '参数错误',
         data: null,
       };
+      return;
     }
 
     try {
