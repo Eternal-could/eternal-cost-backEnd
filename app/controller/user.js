@@ -121,7 +121,6 @@ class UserController extends Controller {
     const token = ctx.request.header.authorization;
     // 通过app.jwt.verify 方法， 解析出token内的用户信息
     const decode = app.jwt.verify(token, app.config.jwt.secret);
-    console.log('decode', decode);
     // 通过 getUserByName 方法，以用户名 decode.username 为参数，从数据库获取到该用户名下的相关信息
     const userInfo = await ctx.service.user.getUserByName(decode.username);
     // userInfo 中应该有密码信息，所以我们指定下面四项返回给客户端
