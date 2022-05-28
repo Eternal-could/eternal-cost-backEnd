@@ -38,12 +38,23 @@ module.exports = appInfo => {
   config.jwt = {
     secret: 'JYuChengXan',
   };
+  // 采用 file 形式
+  config.multipart = {
+    mode: 'file',
+  };
+  // 跨域
+  config.cors = {
+    origin: '*', // 允许所有跨域访问
+    credentials: true, // 允许Cookie跨域
+    allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH',
+  };
   // add your middleware config here
   config.middleware = [];
 
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
+    uploadDir: 'app/public/upload',
   };
   return {
     ...config,
