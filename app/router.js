@@ -9,4 +9,5 @@ module.exports = app => {
   router.post('/api/user/register', controller.user.register);
   router.post('/api/user/login', controller.user.login);
   router.get('/api/user/test', _jwt, controller.user.test); // 放入第二个参数 作为中间件过滤
+  router.get('/api/user/get_userinfo', _jwt, controller.user.getUserInfo); // 获取用户信息
 };
