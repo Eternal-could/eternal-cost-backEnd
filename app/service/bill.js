@@ -60,6 +60,21 @@ class BillService extends Service {
       return null;
     }
   }
+  // 删除账单
+  async delete(id, user_id) {
+    const { app } = this;
+    try {
+      // app.mysql.delete 方法接收两个参数，第一个是数据库表名称，第二个是查询条件。
+      let result = await app.mysql.delete('bill', {
+        id: id,
+        user_id: user_id,
+      });
+      return  result;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
 }
 
 module.exports = BillService;
