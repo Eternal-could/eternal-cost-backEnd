@@ -246,6 +246,84 @@ class BillController extends Controller {
       };
     }
   }
+  // 获取账单表的相关数据
+  async getBillData() {
+    const { ctx, app } = this;
+    const { date = '' } = ctx.query;
+    let user_id;
+    const token = ctx.request.header.authorization;
+    const decode = app.jwt.verify(token, app.config.jwt.secret);
+    if (!decode) return;
+    user_id = decode.id;
+    if (!date) {
+      ctx.body = {
+        code: 400,
+        msg: '参数错误',
+        data: null,
+      };
+      return;
+    }
+    try {
+      // 获取账单表中的账单数据
+      const result = await ctx.service.bill.list(user_id);
+      // 根据时间参数，筛选出当月所有的账单数据
+      const start = moment(date).startOf('month').unix() * 1000; // 选择月份，月初时间
+      const end = moment(date).endOf('month').unix() * 1000; // 选择月份，月末时间
+      const _data = result.filter(item => (Number(item.date) > start && Number(item.date) < end));
+      // 总支出
+      const total_expense = _data.reduce((arr, current) => {
+        if (current.pay_type === 1) {
+          arr += Number(current.amount);
+        }
+        return arr;
+      }, 0);
+      // 总收入
+      const total_income = _data.reduce((arr, current) => {
+        if (current.pay_type === 2) {
+          arr += Number(current.amount);
+        }
+        return arr;
+      }, 0);
+      // 获取收支构成
+      let total_data = _data.reduce((arr, current) => {
+        // 通过 findIndex 方法，查找 arr 内，
+        // 有无和当前项 cur 相同类型的账单，比如学习、餐饮、交通等等。
+        const index = arr.findIndex(item => item.type_id === current.type_id);
+        // 没有找到 那么 通过 arr.push 新增一个类型的数据
+        if (index === -1) {
+          arr.push({
+            type_id: current.type_id,
+            type_name: current.type_name,
+            pay_type: current.pay_type,
+            number: Number(current.amount),
+          });
+        }
+        // 找到了相同的消费类型 那么就消费累加
+        if (index > -1) {
+          arr[index].number += Number(current.amount);
+        }
+        return arr;
+      }, []);
+
+      total_data = total_data.map(item => {
+        // 最后，将所有的 number 数据保留两位小数，并且将数据返回。
+        item.number = Number(Number(item.number).toFixed(2));
+        return item;
+      });
+
+      ctx.body = {
+        code: 200,
+        msg: '请求成功',
+        data: {
+          total_expense: Number(total_expense).toFixed(2),
+          total_income: Number(total_income).toFixed(2),
+          total_data: total_data || [],
+        },
+      };
+    } catch (e) {
+      //
+    }
+  }
 }
 
 module.exports = BillController;
