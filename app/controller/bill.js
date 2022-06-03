@@ -158,7 +158,7 @@ class BillController extends Controller {
     }
     try {
       // 从数据库获取账单详情
-      const detail = await ctx.service.bill.detail(id, user_id)
+      const detail = await ctx.service.bill.detail(id, user_id);
       ctx.body = {
         code: 200,
         msg: '请求成功',
