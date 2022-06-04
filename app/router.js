@@ -11,6 +11,7 @@ module.exports = app => {
   router.get('/api/user/test', _jwt, controller.user.test); // 放入第二个参数 作为中间件过滤
   router.get('/api/user/get_userinfo', _jwt, controller.user.getUserInfo); // 获取用户信息
   router.post('/api/user/edit_userinfo', _jwt, controller.user.editUserInfo); // 获取用户信息
+  router.post('/api/user/modify_pass', _jwt, controller.user.modifyPass); // 修改用户密码
   router.post('/api/upload', controller.upload.upload); // 上传图片
   router.post('/api/bill/add', _jwt, controller.bill.add); // 添加账单
   router.get('/api/bill/list', _jwt, controller.bill.list); // 账单列表

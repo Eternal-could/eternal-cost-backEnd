@@ -13,6 +13,7 @@ class UserService extends Service {
       return null;
     }
   }
+
   // 注册
   async register(params) {
     const { app } = this;
@@ -24,6 +25,7 @@ class UserService extends Service {
       return null;
     }
   }
+
   // 修改用户信息
   async editUserInfo(params) {
     const { app } = this;
@@ -37,6 +39,22 @@ class UserService extends Service {
       return result;
     } catch (e) {
       console.log(e);
+      return null;
+    }
+  }
+
+  // 修改密码
+  async modifyPass(params) {
+    const { app } = this;
+    try {
+      let result = await app.mysql.update('user', {
+        ...params,
+      }, {
+        id: params.id,
+      });
+      return result;
+    } catch (error) {
+      console.log(error);
       return null;
     }
   }
