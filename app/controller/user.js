@@ -195,8 +195,8 @@ class UserController extends Controller {
       }
       user_id = decode.id;
       const userInfo = await ctx.service.user.getUserByName(decode.username);
-
-      if (old_pass !== userInfo.password) {
+      const dePassword = enCryptData(old_pass, userInfo.key, 'sha256');
+      if (dePassword !== userInfo.password) {
         ctx.body = {
           code: 400,
           msg: '原密码错误',
@@ -213,10 +213,10 @@ class UserController extends Controller {
         };
         return;
       }
-
+      const enCodePassword = enCryptData(new_pass, userInfo.key, 'sha256');
       const result = await ctx.service.user.modifyPass({
         ...userInfo,
-        password: new_pass,
+        password: enCodePassword,
       });
 
       ctx.body = {
